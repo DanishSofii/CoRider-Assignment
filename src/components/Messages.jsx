@@ -1,13 +1,13 @@
-import { Avatar, AvatarBadge, Flex, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Avatar, Flex, Text,Container} from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 import "@fontsource/mulish";
-import { CheckCircleIcon } from "@chakra-ui/icons";
 import img from "./image.png";
-import Header from "./Header";
 
 function Messages() {
   const [data, setData] = useState();
-
+  const [date, setDate] =useState("");
+  const [mode,setMode] =useState("online")
+  const containerRef = useRef(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -19,19 +19,49 @@ function Messages() {
         }
         const resultData = await response.json();
         setData(resultData);
-        console.log(resultData);
+        // console.log(resultData);
+
+        localStorage.setItem("messageData",JSON.stringify(resultData));
+
+        const timestamp = resultData.chats[0].time;
+        const newDate = new Date(timestamp);
+        const day = newDate.getDate();
+        const month= newDate.toLocaleString('en-US',{month:'short'}).toUpperCase();
+        const year = newDate.getFullYear();
+        const formatedDate = `${day} ${month}, ${year}`;
+        setDate(formatedDate);
         
         // console.log(resultData.chats[0].id)
       } catch (error) {
         console.log(error);
+        let collection = localStorage.getItem("messageData");
+        setData(JSON.parse(collection));
+        setMode("offline")
       }
     };
+
     fetchData();
+
   }, []);
+  useEffect(() => {
+    console.log("Updating scroll position...");
+    if (containerRef.current) {
+      // console.log("Container ref:", containerRef.current);
+      setTimeout(() => {
+        containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      }, 0);
+    }
+  }, [data]);
+  
   return data ? (
     
-    <Flex as="div"  flexDirection="column" padding="20px" zIndex={1}>
-    
+    <Flex as="div"  flexDirection="column" padding="20px"  position='relative'   top="133px"  bottom="114px" overflowY="auto"  >
+      <div>
+        { mode === 'offline'? <div> You're offline</div>: null}
+      </div>
+    <Container display="flex" alignItems="center">
+      <Container h="0" w="30%" border="1px solid #B7B7B7"></Container> <Text color="#B7B7B7" fontFamily="mullish" fontWeight={400} fontSize="14px" lineHeight="17.57px" width="40%">{date}</Text> <Container h="0" w="30%" border="1px solid #B7B7B7"></Container>
+    </Container>
     {data.chats.map((item, index) => (
       
       <Flex
@@ -78,7 +108,7 @@ function Messages() {
     ))}</Flex>
     ) : (
     <div>Loading</div>
-  ); // Return null or a loading indicator if data is not yet available
+  );
 }
 
 export default Messages;
