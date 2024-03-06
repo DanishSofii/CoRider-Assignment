@@ -19,7 +19,9 @@ function Footer() {
                         </PopoverTrigger>
                         <Portal >
                             <PopoverContent  h="44px" w="124px" p="12px 16px 12px 16px" gap="16px" bg="#008000" borderRadius="999px"display="flex" alignItems="center" justifyContent="center">
-                                <PopoverArrow  bg="008000" />
+                               
+                                <PopoverArrow  bg="#008000" />
+                                
                                 <PopoverBody display="flex" gap="16px"  >
                                     <Button bg="none" border="none"  ><img style={{height:"20px",width:"20px"}} src={cameraIcon} alt="" /></Button>
                                     <Button bg="none" border="none"  ><img style={{height:"20px",width:"20px"}} src={videoIcon} alt="" /></Button>
